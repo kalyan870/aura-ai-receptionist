@@ -8,7 +8,7 @@
 
 AURA AI Receptionist is a full-stack front-desk kiosk and visitor-security platform that greets guests with real-time push-to-talk voice AI, captures webcam security badges, books conflict-free appointments, dispatches 2-way host alerts, and enforces role-based access control backed by Neon PostgreSQL.
 
-**[Open the live application →](https://aura-ai-receptionist-black.vercel.app)** · **[Netlify →](https://aura-ai-receptionist-kalyan.netlify.app)** · **[Cloudflare →](https://aura-ai-receptionist.saragadamkalyan068-fdc.workers.dev)** · **[GitHub Pages →](https://kalyan870.github.io/aura-ai-receptionist/)**
+**[Open the live application →](https://aura-ai-receptionist-black.vercel.app)** · **[Netlify →](https://aura-ai-receptionist-kalyan.netlify.app)** · **[Cloudflare →](https://aura-ai-receptionist.saragadamkalyan068-fdc.workers.dev)** · **[Firebase →](https://elated-garden-472910-m2.web.app)** · **[GitHub Pages →](https://kalyan870.github.io/aura-ai-receptionist/)**
 
 ## Portfolio highlights
 
@@ -140,6 +140,7 @@ wrangler.jsonc Cloudflare Workers static assets configuration
 | **Vercel (Full-Stack)** | https://aura-ai-receptionist-black.vercel.app |
 | **Netlify** | https://aura-ai-receptionist-kalyan.netlify.app |
 | **Cloudflare Workers** | https://aura-ai-receptionist.saragadamkalyan068-fdc.workers.dev |
+| **Firebase Hosting** | https://elated-garden-472910-m2.web.app |
 | **GitHub Pages** | https://kalyan870.github.io/aura-ai-receptionist/ |
 
 See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md), [docs/API_DOCUMENTATION.md](docs/API_DOCUMENTATION.md), [docs/PRD.md](docs/PRD.md), [docs/DESIGN.md](docs/DESIGN.md), [docs/TASKS.md](docs/TASKS.md), [docs/TECHSTACK.md](docs/TECHSTACK.md), [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), [docs/DATABASE.md](docs/DATABASE.md), [docs/USER_FLOWS.md](docs/USER_FLOWS.md), [docs/ACCEPTANCE_CRITERIA.md](docs/ACCEPTANCE_CRITERIA.md), and [backend/db/schema.sql](backend/db/schema.sql).

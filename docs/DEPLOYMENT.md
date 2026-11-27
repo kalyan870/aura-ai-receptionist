@@ -7,6 +7,7 @@
 | **Vercel** | https://aura-ai-receptionist-black.vercel.app | Full-stack Frontend + Express API (`vercel.json` Services) |
 | **Netlify** | https://aura-ai-receptionist-kalyan.netlify.app | Static Frontend connected to Vercel API |
 | **Cloudflare Workers** | https://aura-ai-receptionist.saragadamkalyan068-fdc.workers.dev | Static Frontend connected to Vercel API |
+| **Firebase Hosting** | https://elated-garden-472910-m2.web.app | Static Frontend connected to Vercel API |
 | **GitHub Pages** | https://kalyan870.github.io/aura-ai-receptionist/ | Static Frontend (`gh-pages` branch) connected to Vercel API |
 | **Local Server** | http://localhost:5000 | Unified Node.js + Vite production bundle |
 

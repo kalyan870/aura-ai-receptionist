@@ -41,7 +41,7 @@ export function createApp(db, options = {}) {
         !origin ||
         config.allowedOrigins.includes(origin) ||
         (process.env.VERCEL_URL && origin === `https://${process.env.VERCEL_URL}`) ||
-        /^https:\/\/[a-z0-9.-]+\.(vercel\.app|netlify\.app|pages\.dev|workers\.dev|github\.io)$/i.test(origin)
+        /^https:\/\/[a-z0-9.-]+\.(vercel\.app|netlify\.app|pages\.dev|workers\.dev|github\.io|web\.app|firebaseapp\.com)$/i.test(origin)
       ) {
         return callback(null, true);
       }
