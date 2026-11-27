@@ -2,13 +2,23 @@
 
 > **Autonomous multimodal front-desk intelligence for modern enterprises.**
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20AURA%20AI-06B6D4?style=for-the-badge)](https://aura-ai-receptionist-black.vercel.app)
+[![Vercel](https://img.shields.io/badge/Vercel-Full--Stack%20Live-000000?style=for-the-badge&logo=vercel)](https://aura-ai-receptionist-black.vercel.app)
+[![Netlify](https://img.shields.io/badge/Netlify-Live%20Demo-00C7B7?style=for-the-badge&logo=netlify&logoColor=white)](https://aura-ai-receptionist-kalyan.netlify.app)
+[![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Live%20Demo-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)](https://aura-ai-receptionist.saragadamkalyan068-fdc.workers.dev)
+[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Live%20Demo-222222?style=for-the-badge&logo=github)](https://kalyan870.github.io/aura-ai-receptionist/)
 [![Backend Tests](https://img.shields.io/badge/Tests-15%2F15%20Passing-17A673?style=for-the-badge)](backend/tests/api-security.test.js)
 [![License: MIT](https://img.shields.io/badge/License-MIT-3B82F6?style=for-the-badge)](LICENSE)
 
 AURA AI Receptionist is a full-stack front-desk kiosk and visitor-security platform that greets guests with real-time push-to-talk voice AI, captures webcam security badges, books conflict-free appointments, dispatches 2-way host alerts, and enforces role-based access control backed by Neon PostgreSQL.
 
-**[Open the live application →](https://aura-ai-receptionist-black.vercel.app)**
+### Live Deployments (All 4 Platforms)
+
+| Platform | Live URL | Architecture |
+| --- | --- | --- |
+| **Vercel** | **[aura-ai-receptionist-black.vercel.app →](https://aura-ai-receptionist-black.vercel.app)** | Full-Stack (React Kiosk + Express API) |
+| **Netlify** | **[aura-ai-receptionist-kalyan.netlify.app →](https://aura-ai-receptionist-kalyan.netlify.app)** | React Kiosk → Vercel API |
+| **Cloudflare Workers** | **[aura-ai-receptionist.saragadamkalyan068-fdc.workers.dev →](https://aura-ai-receptionist.saragadamkalyan068-fdc.workers.dev)** | React Kiosk → Vercel API |
+| **GitHub Pages** | **[kalyan870.github.io/aura-ai-receptionist →](https://kalyan870.github.io/aura-ai-receptionist/)** | React Kiosk → Vercel API |
 
 ---
 
