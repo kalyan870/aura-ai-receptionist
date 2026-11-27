@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import CinematicLanding from './components/CinematicLanding';
 import KioskView from './components/KioskView';
 import CheckInModal from './components/CheckInModal';
 import BadgeModal from './components/BadgeModal';
@@ -9,8 +10,9 @@ import { api } from './services/api';
 import { speechService } from './services/speech';
 
 export default function App() {
-  const [currentView, setCurrentView] = useState('kiosk'); // 'kiosk' | 'admin'
+  const [currentView, setCurrentView] = useState('landing'); // 'landing' | 'kiosk' | 'admin'
   const [staffList, setStaffList] = useState([]);
+  const [liveStats, setLiveStats] = useState(null);
   
   // Modals state
   const [isCheckInOpen, setIsCheckInOpen] = useState(false);
@@ -34,11 +36,14 @@ export default function App() {
     }
   ]);
 
-  // Initial staff prefetch
+  // Initial staff & live telemetry prefetch
   useEffect(() => {
     api.getStaff()
       .then(setStaffList)
       .catch(err => console.error('Staff load error:', err));
+    api.getStatus()
+      .then(setLiveStats)
+      .catch(() => {});
   }, []);
 
   // Wire speech service listeners
@@ -166,7 +171,21 @@ export default function App() {
 
   return (
     <div className="font-sans antialiased text-slate-100 bg-[#080C14] min-h-screen">
-      {currentView === 'kiosk' ? (
+      {currentView === 'landing' ? (
+        <CinematicLanding
+          liveStats={liveStats}
+          onLaunchKiosk={() => setCurrentView('kiosk')}
+          onOpenCheckIn={() => {
+            setCurrentView('kiosk');
+            setIsCheckInOpen(true);
+          }}
+          onOpenAppointment={() => {
+            setCurrentView('kiosk');
+            setIsAppointmentOpen(true);
+          }}
+          onOpenAdmin={() => setCurrentView('admin')}
+        />
+      ) : currentView === 'kiosk' ? (
         <KioskView
           chatHistory={chatHistory}
           onSendMessage={handleSendMessage}
@@ -180,6 +199,7 @@ export default function App() {
           onOpenAppointment={() => setIsAppointmentOpen(true)}
           onOpenEmergency={() => setIsEmergencyOpen(true)}
           onOpenAdmin={() => setCurrentView('admin')}
+          onOpenLanding={() => setCurrentView('landing')}
           staffList={staffList}
         />
       ) : (

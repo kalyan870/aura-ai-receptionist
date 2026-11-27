@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   Mic, MicOff, Volume2, VolumeX, Send, Sparkles, UserCheck, 
-  Calendar, Users, HelpCircle, ShieldAlert, Settings, Clock, ArrowRight 
+  Calendar, Users, HelpCircle, ShieldAlert, Settings, Clock, Home 
 } from 'lucide-react';
 import AvatarVisualizer from './AvatarVisualizer';
 
@@ -18,6 +18,7 @@ export default function KioskView({
   onOpenAppointment,
   onOpenEmergency,
   onOpenAdmin,
+  onOpenLanding,
   staffList = []
 }) {
   const [inputText, setInputText] = useState('');
@@ -84,6 +85,15 @@ export default function KioskView({
           </div>
 
           <div className="flex items-center gap-2 bg-slate-900/80 p-1 rounded-2xl border border-slate-800">
+            {onOpenLanding && (
+              <button
+                onClick={onOpenLanding}
+                className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition"
+                title="Back to Cinematic Overview"
+              >
+                <Home className="w-4 h-4" />
+              </button>
+            )}
             <button
               onClick={onToggleVoice}
               className={`p-2 rounded-xl transition ${
