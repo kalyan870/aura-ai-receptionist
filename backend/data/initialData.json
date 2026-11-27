@@ -1,0 +1,96 @@
+{
+  "staff": [
+    {
+      "id": "st-1",
+      "name": "Dr. Sarah Mitchell",
+      "title": "Chief Technology Officer",
+      "department": "Engineering & AI",
+      "email": "sarah.mitchell@aura-tech.corp",
+      "phone": "+1 (555) 234-5678",
+      "room": "Executive Suite 401 (4th Floor)",
+      "status": "Available",
+      "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80"
+    },
+    {
+      "id": "st-2",
+      "name": "Marcus Vance",
+      "title": "VP of Operations",
+      "department": "Operations & Logistics",
+      "email": "marcus.vance@aura-tech.corp",
+      "phone": "+1 (555) 345-6789",
+      "room": "Room 302 (3rd Floor)",
+      "status": "In Meeting",
+      "avatar": "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&auto=format&fit=crop&q=80"
+    },
+    {
+      "id": "st-3",
+      "name": "Elena Rostova",
+      "title": "Head of Talent Acquisition",
+      "department": "Human Resources",
+      "email": "elena.rostova@aura-tech.corp",
+      "phone": "+1 (555) 456-7890",
+      "room": "HR Wing 210 (2nd Floor)",
+      "status": "Available",
+      "avatar": "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&auto=format&fit=crop&q=80"
+    },
+    {
+      "id": "st-4",
+      "name": "David Chen",
+      "title": "Lead Solutions Architect",
+      "department": "Client Partnerships",
+      "email": "david.chen@aura-tech.corp",
+      "phone": "+1 (555) 567-8901",
+      "room": "Innovation Lab 105 (1st Floor)",
+      "status": "Available",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80"
+    },
+    {
+      "id": "st-5",
+      "name": "Sophia Rodriguez",
+      "title": "General Counsel & Legal Lead",
+      "department": "Legal & Compliance",
+      "email": "sophia.rodriguez@aura-tech.corp",
+      "phone": "+1 (555) 678-9012",
+      "room": "Legal Chambers 315 (3rd Floor)",
+      "status": "Out of Office",
+      "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80"
+    }
+  ],
+  "faqs": [
+    {
+      "keywords": ["wifi", "wi-fi", "internet", "network", "password"],
+      "question": "What is the guest Wi-Fi network and password?",
+      "answer": "You can connect to network 'AURA-Guest-5G'. The guest passcode is 'Welcome2026!'. Terms of service will prompt on connection."
+    },
+    {
+      "keywords": ["restroom", "washroom", "toilet", "bathroom"],
+      "question": "Where are the restrooms located?",
+      "answer": "Restrooms are located on every floor immediately past the elevator lobby on the left hand side. Accessible restrooms are adjacent to Room 102 on this ground floor."
+    },
+    {
+      "keywords": ["cafeteria", "coffee", "lunch", "food", "eat", "cafe"],
+      "question": "Where can I get coffee or lunch?",
+      "answer": "Our complimentary Coffee & Refreshment Lounge is to your right next to the atrium. The main cafeteria 'AURA Garden Bistro' is on the 2nd Floor and serves hot meals from 11:30 AM to 2:30 PM."
+    },
+    {
+      "keywords": ["parking", "car", "validation", "garage", "park"],
+      "question": "How do I validate my parking ticket?",
+      "answer": "Guest parking validation is fully complimentary! You can tap your parking ticket on the validation scanner right beside this receptionist kiosk before leaving."
+    },
+    {
+      "keywords": ["hours", "timings", "opening", "closing", "schedule"],
+      "question": "What are the standard office operating hours?",
+      "answer": "Our headquarters is open Monday through Friday from 8:00 AM to 6:30 PM. Building access outside these hours requires security keycard clearance."
+    },
+    {
+      "keywords": ["emergency", "evacuation", "fire", "exit", "first aid"],
+      "question": "What are the emergency exits and first aid locations?",
+      "answer": "Emergency exits are illuminated at both North and South corridors. The primary assembly point is the South Courtyard. A First Aid kit and automated defibrillator (AED) are located directly beside this kiosk."
+    },
+    {
+      "keywords": ["water", "drinking water", "fountain"],
+      "question": "Where can I find drinking water?",
+      "answer": "Chilled filtered water and sparkling water dispensers are available in the visitor waiting lounge, just 10 paces behind you."
+    }
+  ]
+}
