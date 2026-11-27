@@ -18,7 +18,6 @@ AURA AI Receptionist is a full-stack front-desk kiosk and visitor-security platf
 - Designed a **Neon PostgreSQL** relational schema (`staff`, `users`, `visitors`, `appointments`, `notifications`, `faqs`, `audit_logs`) with partial unique indexes to prevent double-booking and parameterized queries via `@neondatabase/serverless`.
 - Hardened all endpoints with **Zod** schema validation, XSS payload sanitization, `helmet` security headers, sliding-window rate limiting, and strict CORS.
 
----
 
 ## What it delivers
 
@@ -28,7 +27,6 @@ AURA AI Receptionist is a full-stack front-desk kiosk and visitor-security platf
 - **Conflict-Free Appointment Scheduling**: Date/time-slot picker with server-side conflict detection (`409 Conflict`).
 - **Staff & Security Admin Portal**: JWT-protected dashboard with live visitor logs, one-click check-out, 2-way host replies, staff status toggles, and printable Emergency Evacuation Muster Roll.
 
----
 
 ## Live Output Screenshots
 
@@ -44,7 +42,6 @@ AURA AI Receptionist is a full-stack front-desk kiosk and visitor-security platf
 ### 4. Staff & Security Portal (JWT Authentication)
 ![AURA Staff & Security Portal](docs/images/04-admin-portal.png)
 
----
 
 ## Complete Front-Desk & Security Workflow
 
@@ -63,7 +60,6 @@ Visitor arrives → Cinematic Landing / Kiosk (Hold-to-Speak or Touch)
    (2-Way Host Reply • Check-Out • Muster Roll • Audit Logs)
 ```
 
----
 
 ## Application Architecture
 
@@ -71,7 +67,6 @@ The application separates browser presentation, Express API & security middlewar
 
 ![AURA AI Receptionist Architecture](docs/images/application-architecture.jpg)
 
----
 
 ## Security, Auth & RBAC Matrix
 
@@ -93,7 +88,6 @@ The application separates browser presentation, Express API & security middlewar
 - All request bodies validated with Zod and stripped of `<`, `>`, and ASCII control characters.
 - Sliding-window rate limiting on `/api/auth/*` and `/api/*`.
 
----
 
 ## Technology
 
@@ -106,7 +100,6 @@ The application separates browser presentation, Express API & security middlewar
 | Testing | Node.js built-in test runner (`node --test`) — 15/15 Unit, Auth, RBAC & E2E tests |
 | Deployment | Vercel (Full-Stack), Netlify, Cloudflare Workers, GitHub Pages |
 
----
 
 ## Repository structure
 
@@ -119,7 +112,6 @@ vercel.json   Vercel Services configuration (frontend + backend)
 wrangler.jsonc Cloudflare Workers static assets configuration
 ```
 
----
 
 ## Run locally
 
@@ -140,7 +132,6 @@ wrangler.jsonc Cloudflare Workers static assets configuration
    ```
    Visit `http://localhost:5000`.
 
----
 
 ## Live Deployments
 
@@ -153,7 +144,6 @@ wrangler.jsonc Cloudflare Workers static assets configuration
 
 See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md), [docs/API.md](docs/API.md), [file.md](file.md) (PRD/TRD), and [backend/db/schema.sql](backend/db/schema.sql).
 
----
 
 ## Environment variables
 
@@ -170,7 +160,6 @@ SEED_ADMIN_EMAIL=admin@aura-tech.corp
 SEED_ADMIN_PASSWORD=
 ```
 
----
 
 ## Roadmap
 
@@ -179,7 +168,6 @@ SEED_ADMIN_PASSWORD=
 - Multi-kiosk device management & lobby badge printer hardware bridge
 - Per-department visitor analytics charts in the Admin Portal
 
----
 
 ## License
 
