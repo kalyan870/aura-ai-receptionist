@@ -6,6 +6,7 @@
 [![Netlify](https://img.shields.io/badge/Netlify-Live%20Demo-00C7B7?style=for-the-badge&logo=netlify&logoColor=white)](https://aura-ai-receptionist-kalyan.netlify.app)
 [![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Live%20Demo-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)](https://aura-ai-receptionist.saragadamkalyan068-fdc.workers.dev)
 [![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Live%20Demo-222222?style=for-the-badge&logo=github)](https://kalyan870.github.io/aura-ai-receptionist/)
+[![Verify AURA Application](https://github.com/kalyan870/aura-ai-receptionist/actions/workflows/ci.yml/badge.svg)](https://github.com/kalyan870/aura-ai-receptionist/actions/workflows/ci.yml)
 [![Backend Tests](https://img.shields.io/badge/Tests-15%2F15%20Passing-17A673?style=for-the-badge)](backend/tests/api-security.test.js)
 [![License: MIT](https://img.shields.io/badge/License-MIT-3B82F6?style=for-the-badge)](LICENSE)
 
@@ -163,7 +164,33 @@ wrangler.jsonc Cloudflare Workers static assets configuration
 | **Cloudflare Workers** | https://aura-ai-receptionist.saragadamkalyan068-fdc.workers.dev |
 | **GitHub Pages** | https://kalyan870.github.io/aura-ai-receptionist/ |
 
-See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) and [backend/db/schema.sql](backend/db/schema.sql) for Neon PostgreSQL setup.
+See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md), [docs/API.md](docs/API.md), [file.md](file.md) (PRD/TRD), and [backend/db/schema.sql](backend/db/schema.sql).
+
+---
+
+## Environment variables
+
+Never expose server secrets in the browser. Use [backend/.env.example](backend/.env.example):
+
+```env
+PORT=5000
+NODE_ENV=development
+DATABASE_URL=
+JWT_SECRET=
+JWT_EXPIRES_IN=8h
+ALLOWED_ORIGINS=http://localhost:3000,http://localhost:5000
+SEED_ADMIN_EMAIL=admin@aura-tech.corp
+SEED_ADMIN_PASSWORD=
+```
+
+---
+
+## Roadmap
+
+- LLM provider toggle (Gemini / OpenAI) on top of the built-in intent engine
+- Email/SMS webhook adapters (SendGrid / Twilio) for real host notifications
+- Multi-kiosk device management & lobby badge printer hardware bridge
+- Per-department visitor analytics charts in the Admin Portal
 
 ---
 
