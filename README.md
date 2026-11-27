@@ -142,7 +142,7 @@ wrangler.jsonc Cloudflare Workers static assets configuration
 | **Cloudflare Workers** | https://aura-ai-receptionist.saragadamkalyan068-fdc.workers.dev |
 | **GitHub Pages** | https://kalyan870.github.io/aura-ai-receptionist/ |
 
-See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md), [docs/API.md](docs/API.md), [file.md](file.md) (PRD/TRD), and [backend/db/schema.sql](backend/db/schema.sql).
+See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md), [docs/API_DOCUMENTATION.md](docs/API_DOCUMENTATION.md), [docs/PRD.md](docs/PRD.md), [docs/DESIGN.md](docs/DESIGN.md), [docs/TASKS.md](docs/TASKS.md), [docs/TECHSTACK.md](docs/TECHSTACK.md), [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), [docs/DATABASE.md](docs/DATABASE.md), [docs/USER_FLOWS.md](docs/USER_FLOWS.md), [docs/ACCEPTANCE_CRITERIA.md](docs/ACCEPTANCE_CRITERIA.md), and [backend/db/schema.sql](backend/db/schema.sql).
 
 
 ## Environment variables

@@ -5,6 +5,7 @@ import CheckInModal from './components/CheckInModal';
 import BadgeModal from './components/BadgeModal';
 import AppointmentModal from './components/AppointmentModal';
 import EmergencyModal from './components/EmergencyModal';
+import SupportTicketModal from './components/SupportTicketModal';
 import AdminDashboard from './components/AdminDashboard';
 import { api } from './services/api';
 import { speechService } from './services/speech';
@@ -20,6 +21,8 @@ export default function App() {
   const [selectedVisitorForBadge, setSelectedVisitorForBadge] = useState(null);
   const [isAppointmentOpen, setIsAppointmentOpen] = useState(false);
   const [isEmergencyOpen, setIsEmergencyOpen] = useState(false);
+  const [isTicketOpen, setIsTicketOpen] = useState(false);
+  const [chatSessionId] = useState(() => `sess-${Math.random().toString(36).slice(2, 10)}`);
 
   // AI & Voice State
   const [aiState, setAiState] = useState('idle'); // 'idle' | 'listening' | 'thinking' | 'speaking'
@@ -80,7 +83,7 @@ export default function App() {
     setAiState('thinking');
 
     try {
-      const res = await api.sendMessage(text.trim());
+      const res = await api.sendMessage(text.trim(), chatSessionId);
       
       const auraMsg = {
         sender: 'aura',
@@ -91,13 +94,15 @@ export default function App() {
 
       setChatHistory(prev => [...prev, auraMsg]);
 
-      // Handle autonomous action triggers from AI
+      // Handle autonomous action triggers from AI Super Chatbot
       if (res.action === 'OPEN_CHECKIN') {
         setIsCheckInOpen(true);
       } else if (res.action === 'OPEN_BOOKING') {
         setIsAppointmentOpen(true);
       } else if (res.action === 'OPEN_EMERGENCY') {
         setIsEmergencyOpen(true);
+      } else if (res.action === 'OPEN_TICKET') {
+        setIsTicketOpen(true);
       }
 
       // Voice TTS feedback if enabled
@@ -198,6 +203,7 @@ export default function App() {
           onOpenCheckIn={() => setIsCheckInOpen(true)}
           onOpenAppointment={() => setIsAppointmentOpen(true)}
           onOpenEmergency={() => setIsEmergencyOpen(true)}
+          onOpenTicket={() => setIsTicketOpen(true)}
           onOpenAdmin={() => setCurrentView('admin')}
           onOpenLanding={() => setCurrentView('landing')}
           staffList={staffList}
@@ -231,6 +237,18 @@ export default function App() {
       <EmergencyModal
         isOpen={isEmergencyOpen}
         onClose={() => setIsEmergencyOpen(false)}
+      />
+
+      <SupportTicketModal
+        isOpen={isTicketOpen}
+        onClose={() => setIsTicketOpen(false)}
+        onTicketCreated={(t) => {
+          setChatHistory(prev => [...prev, {
+            sender: 'aura',
+            text: `Support ticket ${t.id} ("${t.subject}") has been logged with ${t.priority} priority.`,
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          }]);
+        }}
       />
     </div>
   );

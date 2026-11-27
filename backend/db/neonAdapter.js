@@ -330,6 +330,58 @@ export class NeonAdapter {
     return rows;
   }
 
+  // ---- SUPPORT TICKETS ----
+  async listTickets() {
+    const { rows } = await this.pool.query(
+      `SELECT id, customer_name AS "customerName", customer_email AS "customerEmail", category, priority,
+              subject, description, status, assigned_to AS "assignedTo", resolution_notes AS "resolutionNotes",
+              created_at AS "createdAt", updated_at AS "updatedAt"
+       FROM support_tickets ORDER BY created_at DESC`
+    );
+    return rows;
+  }
+
+  async createTicket(t) {
+    const { rows } = await this.pool.query(
+      `INSERT INTO support_tickets (id, customer_name, customer_email, category, priority, subject, description, status)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+       RETURNING id, customer_name AS "customerName", customer_email AS "customerEmail", category, priority,
+                 subject, description, status, assigned_to AS "assignedTo", resolution_notes AS "resolutionNotes",
+                 created_at AS "createdAt", updated_at AS "updatedAt"`,
+      [t.id, t.customerName, t.customerEmail, t.category, t.priority, t.subject, t.description, t.status || 'open']
+    );
+    return rows[0];
+  }
+
+  async updateTicket(id, fields) {
+    const map = { status: 'status', assignedTo: 'assigned_to', resolutionNotes: 'resolution_notes' };
+    const updates = [];
+    const values = [];
+    let idx = 1;
+    for (const [jsKey, col] of Object.entries(map)) {
+      if (fields[jsKey] !== undefined) {
+        updates.push(`${col} = $${idx++}`);
+        values.push(fields[jsKey]);
+      }
+    }
+    if (updates.length === 0) return null;
+    updates.push(`updated_at = NOW()`);
+    values.push(id);
+    const { rows } = await this.pool.query(
+      `UPDATE support_tickets SET ${updates.join(', ')} WHERE id = $${idx}
+       RETURNING id, customer_name AS "customerName", customer_email AS "customerEmail", category, priority,
+                 subject, description, status, assigned_to AS "assignedTo", resolution_notes AS "resolutionNotes",
+                 created_at AS "createdAt", updated_at AS "updatedAt"`,
+      values
+    );
+    return rows[0] || null;
+  }
+
+  async deleteTicket(id) {
+    const { rowCount } = await this.pool.query('DELETE FROM support_tickets WHERE id = $1', [id]);
+    return rowCount > 0;
+  }
+
   async close() {
     await this.pool.end();
   }

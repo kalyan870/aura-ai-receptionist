@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   Mic, MicOff, Volume2, VolumeX, Send, Sparkles, UserCheck, 
-  Calendar, Users, HelpCircle, ShieldAlert, Settings, Clock, Home 
+  Calendar, Users, HelpCircle, ShieldAlert, Settings, Clock, Home, LifeBuoy 
 } from 'lucide-react';
 import AvatarVisualizer from './AvatarVisualizer';
 
@@ -17,6 +17,7 @@ export default function KioskView({
   onOpenCheckIn,
   onOpenAppointment,
   onOpenEmergency,
+  onOpenTicket,
   onOpenAdmin,
   onOpenLanding,
   staffList = []
@@ -281,6 +282,14 @@ export default function KioskView({
             >
               <Calendar className="w-4 h-4" />
               Book Appointment
+            </button>
+
+            <button
+              onClick={onOpenTicket}
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs bg-amber-600/80 hover:bg-amber-600 text-white transition shadow-lg shadow-amber-600/20"
+            >
+              <LifeBuoy className="w-4 h-4" />
+              Support Ticket
             </button>
 
             <button

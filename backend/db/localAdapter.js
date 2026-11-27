@@ -82,6 +82,7 @@ export class LocalAdapter {
     // Ensure arrays exist on older db.json
     this.data.users = this.data.users || [];
     this.data.auditLogs = this.data.auditLogs || [];
+    this.data.tickets = this.data.tickets || [];
     this.data.faqs = (this.data.faqs || []).map((f, idx) => ({ id: f.id || `faq-${idx + 1}`, ...f }));
 
     // Seed initial admin user if empty and password provided
@@ -296,6 +297,37 @@ export class LocalAdapter {
 
   async listAuditLogs(limit = 50) {
     return this.data.auditLogs.slice(0, limit);
+  }
+
+  // ---- SUPPORT TICKETS ----
+  async listTickets() {
+    return this.data.tickets;
+  }
+
+  async createTicket(t) {
+    this.data.tickets.unshift(t);
+    this.save();
+    return t;
+  }
+
+  async updateTicket(id, fields) {
+    const idx = this.data.tickets.findIndex(t => t.id === id);
+    if (idx === -1) return null;
+    this.data.tickets[idx] = {
+      ...this.data.tickets[idx],
+      ...fields,
+      updatedAt: new Date().toISOString()
+    };
+    this.save();
+    return this.data.tickets[idx];
+  }
+
+  async deleteTicket(id) {
+    const idx = this.data.tickets.findIndex(t => t.id === id);
+    if (idx === -1) return false;
+    this.data.tickets.splice(idx, 1);
+    this.save();
+    return true;
   }
 
   async close() {}

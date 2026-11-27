@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+import { verifyToken as verifyClerkToken } from '@clerk/backend';
 import { config } from '../config/env.js';
 
 export function signToken(user) {
@@ -15,9 +16,54 @@ export function signToken(user) {
 }
 
 /**
- * Middleware: Requires a valid Bearer JWT and active user account.
+ * Verifies a Bearer token against local JWT first, then Clerk JWKS if CLERK_SECRET_KEY is configured.
  */
-export function authenticateToken(db) {
+async function resolveAuthenticatedUser(token, db, clerkVerifier = verifyClerkToken) {
+  // 1. Try local application JWT
+  try {
+    const decoded = jwt.verify(token, config.jwtSecret);
+    const user = await db.findUserById(decoded.sub);
+    if (user && user.isActive) {
+      return { ...user, authProvider: 'local-jwt' };
+    }
+    return null;
+  } catch (err) {
+    if (err.name === 'TokenExpiredError') {
+      const expiredErr = new Error('Session expired. Please sign in again.');
+      expiredErr.code = 'TOKEN_EXPIRED';
+      throw expiredErr;
+    }
+  }
+
+  // 2. Try Clerk JWT if configured
+  if (config.clerkSecretKey) {
+    try {
+      const clerkClaims = await clerkVerifier(token, { secretKey: config.clerkSecretKey });
+      const clerkId = clerkClaims.sub;
+      const role = clerkClaims.public_metadata?.role || clerkClaims.metadata?.role || 'staff';
+      const email = clerkClaims.email || `${clerkId}@clerk.local`;
+      return {
+        id: clerkId,
+        clerkId,
+        email,
+        fullName: clerkClaims.full_name || email.split('@')[0],
+        role: ['admin', 'staff', 'security'].includes(role) ? role : 'staff',
+        staffId: clerkClaims.public_metadata?.staffId || null,
+        isActive: true,
+        authProvider: 'clerk'
+      };
+    } catch {
+      return null;
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Middleware: Requires a valid Bearer JWT (local or Clerk) and active user account.
+ */
+export function authenticateToken(db, options = {}) {
   return async (req, res, next) => {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -30,16 +76,15 @@ export function authenticateToken(db) {
     }
 
     try {
-      const decoded = jwt.verify(token, config.jwtSecret);
-      const user = await db.findUserById(decoded.sub);
-      if (!user || !user.isActive) {
-        return res.status(401).json({ error: 'Account is inactive or no longer exists.' });
+      const user = await resolveAuthenticatedUser(token, db, options.clerkVerifier);
+      if (!user) {
+        return res.status(401).json({ error: 'Invalid authentication token or inactive account.' });
       }
       req.user = user;
       next();
     } catch (err) {
-      if (err.name === 'TokenExpiredError') {
-        return res.status(401).json({ error: 'Session expired. Please sign in again.' });
+      if (err.code === 'TOKEN_EXPIRED') {
+        return res.status(401).json({ error: err.message });
       }
       return res.status(401).json({ error: 'Invalid authentication token.' });
     }
@@ -74,9 +119,8 @@ export function optionalAuth(db) {
     }
     const token = authHeader.slice(7).trim();
     try {
-      const decoded = jwt.verify(token, config.jwtSecret);
-      const user = await db.findUserById(decoded.sub);
-      if (user && user.isActive) {
+      const user = await resolveAuthenticatedUser(token, db);
+      if (user) {
         req.user = user;
       }
     } catch {

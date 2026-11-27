@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS staff (
 
 CREATE TABLE IF NOT EXISTS users (
   id VARCHAR(64) PRIMARY KEY,
+  clerk_id VARCHAR(128) UNIQUE,
   email VARCHAR(255) UNIQUE NOT NULL,
   password_hash TEXT NOT NULL,
   full_name VARCHAR(120) NOT NULL,
@@ -100,3 +101,20 @@ CREATE INDEX IF NOT EXISTS idx_visitors_checkin ON visitors (check_in_time DESC)
 CREATE INDEX IF NOT EXISTS idx_appointments_date ON appointments (date);
 CREATE INDEX IF NOT EXISTS idx_notifications_host ON notifications (host_id);
 CREATE INDEX IF NOT EXISTS idx_audit_logs_created ON audit_logs (created_at DESC);
+
+CREATE TABLE IF NOT EXISTS support_tickets (
+  id VARCHAR(64) PRIMARY KEY,
+  customer_name VARCHAR(120) NOT NULL,
+  customer_email VARCHAR(255),
+  category VARCHAR(64) NOT NULL DEFAULT 'General Support',
+  priority VARCHAR(32) NOT NULL DEFAULT 'Medium' CHECK (priority IN ('Low', 'Medium', 'High', 'Urgent')),
+  subject VARCHAR(255) NOT NULL,
+  description TEXT NOT NULL,
+  status VARCHAR(32) NOT NULL DEFAULT 'open' CHECK (status IN ('open', 'in_progress', 'resolved')),
+  assigned_to VARCHAR(120),
+  resolution_notes TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_tickets_status ON support_tickets (status);

@@ -2,7 +2,7 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { hashPassword, verifyPassword, sanitizeUser } from '../utils/crypto.js';
 import { sanitizeString, sanitizePayload } from '../middleware/validate.js';
-import { processAiQuery } from '../utils/aiEngine.js';
+import { processAiQuery, getSessionHistory } from '../utils/aiEngine.js';
 
 describe('Fast Unit Tests — Crypto & Secret Safety', () => {
   it('hashes passwords with unique random salts and verifies accurately', () => {
@@ -65,12 +65,24 @@ describe('Fast Unit Tests — AI Dialogue Engine', () => {
     { id: 'faq-1', keywords: ['wifi', 'password'], question: 'Wi-Fi?', answer: 'Network AURA-Guest-5G' }
   ];
 
-  it('classifies greetings, check-in, booking, staff lookup, FAQ, and emergency', () => {
+  it('classifies greetings, check-in, booking, staff lookup, FAQ, emergency, pricing, and support tickets', () => {
     assert.equal(processAiQuery('Hello!', mockStaff, mockFaqs).intent, 'GREETING');
     assert.equal(processAiQuery('I want to check in', mockStaff, mockFaqs).action, 'OPEN_CHECKIN');
     assert.equal(processAiQuery('Schedule an appointment', mockStaff, mockFaqs).action, 'OPEN_BOOKING');
     assert.equal(processAiQuery('Where is Sarah Mitchell?', mockStaff, mockFaqs).staff.id, 'st-1');
     assert.equal(processAiQuery('What is the wifi password?', mockStaff, mockFaqs).intent, 'FAQ_ANSWER');
     assert.equal(processAiQuery('Fire emergency!', mockStaff, mockFaqs).action, 'OPEN_EMERGENCY');
+    assert.equal(processAiQuery('What is your enterprise pricing?', mockStaff, mockFaqs).intent, 'CUSTOMER_PRICING');
+    assert.equal(processAiQuery('I need to open a support ticket for a bug', mockStaff, mockFaqs).action, 'OPEN_TICKET');
+  });
+
+  it('maintains multi-turn session history for Super Chatbot', () => {
+    const sid = 'unit-sess-1';
+    processAiQuery('Hello', mockStaff, mockFaqs, { sessionId: sid });
+    processAiQuery('What is the pricing?', mockStaff, mockFaqs, { sessionId: sid });
+    const history = getSessionHistory(sid);
+    assert.equal(history.length, 4);
+    assert.equal(history[0].role, 'user');
+    assert.equal(history[3].intent, 'CUSTOMER_PRICING');
   });
 });

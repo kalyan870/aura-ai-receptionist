@@ -74,14 +74,40 @@ export const api = {
     return parseJson(res, 'Failed to fetch status');
   },
 
-  // AI Chat
-  async sendMessage(message) {
+  // AI Super Chatbot
+  async sendMessage(message, sessionId = null) {
     const res = await fetch(`${BASE_URL}/chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message })
+      body: JSON.stringify({ message, sessionId })
     });
     return parseJson(res, 'AI Chat failed');
+  },
+
+  // Support Tickets
+  async createTicket(data) {
+    const res = await fetch(`${BASE_URL}/tickets`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    return parseJson(res, 'Failed to create support ticket');
+  },
+
+  async getTickets() {
+    const res = await fetch(`${BASE_URL}/tickets`, {
+      headers: getAuthHeaders()
+    });
+    return parseJson(res, 'Failed to fetch support tickets');
+  },
+
+  async updateTicket(id, fields) {
+    const res = await fetch(`${BASE_URL}/tickets/${id}`, {
+      method: 'PATCH',
+      headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify(fields)
+    });
+    return parseJson(res, 'Failed to update support ticket');
   },
 
   // Staff

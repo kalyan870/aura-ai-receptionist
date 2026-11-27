@@ -1,46 +1,92 @@
+// In-memory multi-turn session store for AI Customer Super Chatbot
+const chatSessions = new Map();
+
+export function getSessionHistory(sessionId) {
+  if (!sessionId) return [];
+  return chatSessions.get(sessionId) || [];
+}
+
 /**
- * AI Receptionist Conversational Intent & Knowledge Engine
+ * AI Customer Super Chatbot & Receptionist Intent Engine
  */
-export function processAiQuery(userMessage, staffList = [], faqList = []) {
-  const query = (userMessage || '').toLowerCase().trim();
+export function processAiQuery(userMessage, staffList = [], faqList = [], options = {}) {
+  const raw = (userMessage || '').trim();
+  const query = raw.toLowerCase();
+  const sessionId = options.sessionId || null;
+
+  if (sessionId) {
+    const hist = chatSessions.get(sessionId) || [];
+    hist.push({ role: 'user', text: raw, ts: Date.now() });
+    if (hist.length > 20) hist.shift();
+    chatSessions.set(sessionId, hist);
+  }
+
+  const recordReply = (result) => {
+    if (sessionId) {
+      const hist = chatSessions.get(sessionId) || [];
+      hist.push({ role: 'assistant', text: result.text, intent: result.intent, ts: Date.now() });
+      if (hist.length > 20) hist.shift();
+      chatSessions.set(sessionId, hist);
+    }
+    return { ...result, sessionId };
+  };
 
   if (!query) {
-    return {
-      text: 'Hello! I am AURA, your AI Receptionist. How may I assist you today? You can check in, book an appointment, or ask any question about our office.',
+    return recordReply({
+      text: 'Hello! I am AURA, your AI Customer Super Chatbot & Receptionist. I can answer product/pricing questions, open a support ticket, check you in, or book a meeting. How can I help?',
       intent: 'GREETING',
       action: null,
-      suggestions: ['Check in as a visitor', 'Schedule appointment', 'Guest Wi-Fi password']
-    };
+      suggestions: ['Create a support ticket', 'Pricing & enterprise plans', 'Check in as a visitor', 'Guest Wi-Fi password']
+    });
   }
 
-  // 1. GREETING Intent
+  // 1. GREETING
   if (/^(hello|hi|hey|good morning|good afternoon|good evening|greetings)/i.test(query)) {
-    return {
-      text: 'Welcome to AURA Tech Headquarters! I am AURA, your intelligent front-desk assistant. Are you checking in for a meeting, looking for a team member, or need office information?',
+    return recordReply({
+      text: 'Welcome to AURA Tech Headquarters! I am AURA, your AI Customer Super Chatbot & Receptionist. Would you like customer support, a new support ticket, visitor check-in, or office info?',
       intent: 'GREETING',
-      suggestions: ['Check in as a visitor', 'Find an employee', 'Schedule appointment', 'Where is the cafeteria?']
-    };
+      suggestions: ['Create a support ticket', 'Pricing & enterprise plans', 'Check in as a visitor', 'Schedule appointment']
+    });
   }
 
-  // 2. CHECK-IN Intent
+  // 2. SUPPORT TICKET / ISSUE / BUG / BILLING ESCALATION
+  if (/ticket|support|issue|problem|bug|error|broken|billing|refund|complaint|help\s?desk/i.test(query)) {
+    return recordReply({
+      text: 'I can log a priority support ticket for you right away so our engineering & customer success team can assist you. Opening the Support Ticket form now!',
+      intent: 'ACTION_CREATE_TICKET',
+      action: 'OPEN_TICKET',
+      suggestions: ['Check ticket SLA', 'Talk to a live specialist', 'Browse FAQs']
+    });
+  }
+
+  // 3. PRICING / PLANS / ENTERPRISE INQUIRY
+  if (/pricing|price|cost|plan|enterprise|subscription|demo|trial/i.test(query)) {
+    return recordReply({
+      text: 'AURA Enterprise plans start at \$149/month per kiosk (unlimited visitors, Neon PostgreSQL cloud sync, Clerk SSO/MFA, and 24/7 priority SLA). Would you like to book a live architecture demo with David Chen or open a sales ticket?',
+      intent: 'CUSTOMER_PRICING',
+      suggestions: ['Book appointment', 'Create a support ticket', 'Find David Chen']
+    });
+  }
+
+  // 4. CHECK-IN Intent
   if (/check\s?in|sign\s?in|visitor pass|badge|register|arrived/i.test(query)) {
-    return {
-      text: "I can assist you with your express check-in right now! Please tap the 'Check In' button on screen to enter your details and print your digital badge.",
+    return recordReply({
+      text: "I can assist you with your express check-in right now! Please enter your details and capture your photo to print your QR visitor badge.",
       intent: 'ACTION_CHECKIN',
       action: 'OPEN_CHECKIN'
-    };
+    });
   }
 
-  // 3. APPOINTMENT Intent
+  // 5. APPOINTMENT Intent
   if (/appointment|schedule|book|meeting slot|reserve|calendar/i.test(query)) {
-    return {
-      text: 'Certainly! You can schedule an appointment with any of our department leads or reserve a conference room. Would you like me to open the booking calendar?',
+    return recordReply({
+      text: 'Certainly! You can schedule a conflict-free appointment with any of our department leads. Opening the booking calendar now.',
       intent: 'ACTION_BOOKING',
       action: 'OPEN_BOOKING'
-    };
+    });
   }
 
-  // 4. STAFF / DIRECTORY SEARCH
+  // 6. STAFF / DIRECTORY SEARCH
   for (const person of staffList) {
     const nameParts = person.name.toLowerCase().split(' ');
     const match = nameParts.some(part => part.length > 2 && query.includes(part));
@@ -54,16 +100,16 @@ export function processAiQuery(userMessage, staffList = [], faqList = []) {
         status: person.status,
         avatar: person.avatar
       };
-      return {
-        text: `${person.name} is our ${person.title} in the ${person.department} department. Their office is located at ${person.room}. Their current status is: "${person.status}". Would you like me to notify them of your arrival or book a meeting?`,
+      return recordReply({
+        text: `${person.name} is our ${person.title} in ${person.department} (${person.room}). Current availability: "${person.status}". Would you like to check in to meet them or book a slot?`,
         intent: 'STAFF_INFO',
         staff: publicStaff,
         suggestions: [`Check in to see ${person.name}`, `Book meeting with ${person.name}`]
-      };
+      });
     }
   }
 
-  // 5. FAQ / OFFICE KNOWLEDGE BASE MATCH
+  // 7. FAQ / OFFICE KNOWLEDGE BASE MATCH
   let bestFaq = null;
   let maxScore = 0;
 
@@ -81,34 +127,34 @@ export function processAiQuery(userMessage, staffList = [], faqList = []) {
   }
 
   if (bestFaq && maxScore >= 2) {
-    return {
+    return recordReply({
       text: bestFaq.answer,
       intent: 'FAQ_ANSWER',
       topic: bestFaq.question
-    };
+    });
   }
 
-  // 6. EMERGENCY / SECURITY
+  // 8. EMERGENCY / SECURITY
   if (/emergency|fire|police|evacuate|danger|hazard|ambulance/i.test(query)) {
-    return {
-      text: 'EMERGENCY PROTOCOL: Building emergency alarms can be activated at all stairwells. North and South exits lead directly to the South Courtyard assembly point. First Aid and AED are right beside this kiosk. Security is on standby at Ext 9911.',
+    return recordReply({
+      text: 'EMERGENCY PROTOCOL: North and South exits lead directly to the South Courtyard assembly point. First Aid & AED are beside this kiosk. Security dispatch is on Ext 9911.',
       intent: 'EMERGENCY',
       action: 'OPEN_EMERGENCY'
-    };
+    });
   }
 
-  // 7. WHO ARE YOU / CAPABILITIES
-  if (/who are you|what can you do|your name|features|help/i.test(query)) {
-    return {
-      text: 'I am AURA, an autonomous AI Receptionist. I can instantly check you in, print your digital visitor badge, notify your host employee, schedule new appointments, answer questions about Wi-Fi, restrooms, and directions, or summon building security.',
+  // 9. CAPABILITIES
+  if (/who are you|what can you do|your name|features|capabilities/i.test(query)) {
+    return recordReply({
+      text: 'I am AURA, an AI Customer Super Chatbot & Receptionist. I can answer product & pricing questions, create support tickets, check in visitors with QR badges, book appointments, and look up staff availability.',
       intent: 'CAPABILITIES',
-      suggestions: ['Check in for visit', 'Guest Wi-Fi password', 'Find team member', 'Office directions']
-    };
+      suggestions: ['Create a support ticket', 'Pricing & enterprise plans', 'Express Check-In', 'Guest Wi-Fi password']
+    });
   }
 
-  return {
-    text: `I understand you are asking about "${userMessage}". While I connect you with our directory, you can easily check in, schedule an appointment, or ask about our amenities like Wi-Fi and parking!`,
+  return recordReply({
+    text: `I received your message about "${raw}". I can connect you to customer support via a ticket, check you in for a visit, or share pricing and office info!`,
     intent: 'GENERAL_INQUIRY',
-    suggestions: ['Express Check-In', 'Wi-Fi Information', 'Browse Staff Directory', 'Parking Validation']
-  };
+    suggestions: ['Create a support ticket', 'Pricing & enterprise plans', 'Express Check-In', 'Wi-Fi Information']
+  });
 }

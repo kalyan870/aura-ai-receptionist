@@ -16,12 +16,14 @@ import { createAppointmentsRouter } from './routes/appointments.js';
 import { createNotificationsRouter } from './routes/notifications.js';
 import { createFaqsRouter } from './routes/faqs.js';
 import { createAdminRouter } from './routes/admin.js';
+import { createTicketsRouter } from './routes/tickets.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const chatSchema = z.object({
-  message: z.string().max(1000).optional().default('')
+  message: z.string().max(1000).optional().default(''),
+  sessionId: z.string().max(100).optional().nullable()
 });
 
 export function createApp(db, options = {}) {
@@ -84,15 +86,18 @@ export function createApp(db, options = {}) {
     });
   });
 
-  // Conversational AI endpoint (public kiosk)
+  // Conversational AI Super Chatbot endpoint (public kiosk)
   app.post('/api/chat', validateBody(chatSchema), async (req, res) => {
     const [staff, faqs] = await Promise.all([db.listStaff(), db.listFaqs()]);
-    const response = processAiQuery(req.body.message, staff, faqs);
+    const response = processAiQuery(req.body.message, staff, faqs, {
+      sessionId: req.body.sessionId || null
+    });
     res.json({
       reply: response.text,
       intent: response.intent,
       action: response.action || null,
       staff: response.staff || null,
+      sessionId: response.sessionId || null,
       suggestions: response.suggestions || []
     });
   });
@@ -104,6 +109,7 @@ export function createApp(db, options = {}) {
   app.use('/api/appointments', createAppointmentsRouter(db));
   app.use('/api/notifications', createNotificationsRouter(db));
   app.use('/api/faqs', createFaqsRouter(db));
+  app.use('/api/tickets', createTicketsRouter(db));
   app.use('/api', createAdminRouter(db));
 
   // Unknown API routes return 404 JSON

@@ -34,5 +34,8 @@ export const config = {
     .map(o => o.trim())
     .filter(Boolean),
   seedAdminEmail: process.env.SEED_ADMIN_EMAIL || 'admin@aura-tech.corp',
-  seedAdminPassword: process.env.SEED_ADMIN_PASSWORD || ''
+  seedAdminPassword: process.env.SEED_ADMIN_PASSWORD || '',
+  clerkPublishableKey: process.env.CLERK_PUBLISHABLE_KEY || '',
+  clerkSecretKey: process.env.CLERK_SECRET_KEY || '',
+  cfTurnstileSecret: process.env.CF_TURNSTILE_SECRET || ''
 };

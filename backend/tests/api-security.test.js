@@ -362,7 +362,68 @@ describe('API, Auth, RBAC, Validation & E2E Security Suite', () => {
     })).status, 200);
   });
 
-  it('9. Audit Logs verify security events were recorded', async () => {
+  it('9. Support Tickets CRUD, Super Chatbot Session & RBAC', async () => {
+    // Super Chatbot triggers OPEN_TICKET with sessionId
+    const chatRes = await req('/api/chat', {
+      method: 'POST',
+      body: JSON.stringify({ message: 'I have a billing issue and need support', sessionId: 'e2e-sess-99' })
+    });
+    assert.equal(chatRes.status, 200);
+    assert.equal(chatRes.body.action, 'OPEN_TICKET');
+    assert.equal(chatRes.body.sessionId, 'e2e-sess-99');
+
+    // Validation rejects short ticket description
+    const badTicket = await req('/api/tickets', {
+      method: 'POST',
+      body: JSON.stringify({ customerName: 'Alex', subject: 'Hi', description: 'no' })
+    });
+    assert.equal(badTicket.status, 400);
+
+    // Public kiosk creates support ticket
+    const ticketRes = await req('/api/tickets', {
+      method: 'POST',
+      body: JSON.stringify({
+        customerName: 'Alex Morgan',
+        customerEmail: 'alex@enterprise.com',
+        category: 'Account & SSO',
+        priority: 'High',
+        subject: 'Clerk SSO setup question',
+        description: 'Need guidance configuring Clerk metadata roles.'
+      })
+    });
+    assert.equal(ticketRes.status, 201);
+    assert.ok(ticketRes.body.ticket.id.startsWith('TKT-'));
+    const ticketId = ticketRes.body.ticket.id;
+
+    // Unauthenticated GET /api/tickets -> 401
+    assert.equal((await req('/api/tickets')).status, 401);
+
+    // Staff can list & update ticket, cannot delete (403)
+    assert.equal((await req('/api/tickets', {
+      headers: { Authorization: `Bearer ${staffToken}` }
+    })).status, 200);
+
+    const upd = await req(`/api/tickets/${ticketId}`, {
+      method: 'PATCH',
+      headers: { Authorization: `Bearer ${staffToken}` },
+      body: JSON.stringify({ status: 'resolved', resolutionNotes: 'Configured public_metadata.role' })
+    });
+    assert.equal(upd.status, 200);
+    assert.equal(upd.body.ticket.status, 'resolved');
+
+    assert.equal((await req(`/api/tickets/${ticketId}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${staffToken}` }
+    })).status, 403);
+
+    // Admin can delete ticket
+    assert.equal((await req(`/api/tickets/${ticketId}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${adminToken}` }
+    })).status, 200);
+  });
+
+  it('10. Audit Logs verify security & ticket events were recorded', async () => {
     const logs = await req('/api/audit-logs', {
       headers: { Authorization: `Bearer ${adminToken}` }
     });
@@ -370,5 +431,6 @@ describe('API, Auth, RBAC, Validation & E2E Security Suite', () => {
     assert.ok(logs.body.some(l => l.action === 'AUTH_LOGIN_FAILED'));
     assert.ok(logs.body.some(l => l.action === 'AUTH_LOGIN_SUCCESS'));
     assert.ok(logs.body.some(l => l.action === 'VISITOR_CHECKOUT'));
+    assert.ok(logs.body.some(l => l.action === 'TICKET_UPDATED'));
   });
 });
